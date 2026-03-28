@@ -4,36 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comparador CDMX - Vista Tienda</title>
-    <!-- [FILOSOFÍA] Uso de Tailwind via CDN para prototipado rápido sin dependencias locales pesadas -->
+    <!-- [FILOSOFÍA] Zero-Install: Usamos Tailwind via CDN para iterar rápido sin configuraciones pesadas de node_modules. -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        /* Estilos base para los toggles (interruptores) */
+        /* [ARQUITECTURA UI] Estilos puros de CSS para interactividad sin recargar el JS */
         .toggle-checkbox:checked { right: 0; border-color: #10B981; }
         .toggle-checkbox:checked + .toggle-label { background-color: #10B981; }
         .toggle-checkbox { right: 0; z-index: 1; border-color: #E5E7EB; transition: all 0.3s; }
         .toggle-label { width: 2.5rem; height: 1.25rem; background-color: #E5E7EB; border-radius: 9999px; transition: all 0.3s; }
         
-        /* Animaciones para los Modales */
         .modal-enter { transform: translateY(100%); opacity: 0; }
         .modal-enter-active { transform: translateY(0); opacity: 1; transition: all 0.2s ease-out; }
         .modal-leave { transform: translateY(0); opacity: 1; }
         .modal-leave-active { transform: translateY(100%); opacity: 0; transition: all 0.2s ease-in; }
         
-        /* Ocultar scrollbars para look de app nativa */
         ::-webkit-scrollbar { width: 0px; background: transparent; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans h-screen flex justify-center">
 
+    <!-- [FILOSOFÍA] Contenedor restringido a max-w-md para forzar el diseño Mobile-First -->
     <div class="w-full max-w-md bg-white h-full relative flex flex-col shadow-2xl overflow-hidden">
         
         <!-- ========================================== -->
-        <!-- HEADER STICKY -->
+        <!-- HEADER STICKY (Navegación y Controles) -->
         <!-- ========================================== -->
         <header class="sticky top-0 z-40 bg-white border-b shadow-sm pt-4 px-4 pb-3 flex flex-col gap-3">
             <div class="flex justify-between items-center">
-                <!-- Selector de Ubicación (Placeholder) -->
+                <!-- Selector de Ubicación / Contexto Actual -->
                 <div class="flex flex-col cursor-pointer group" onclick="abrirModalUbicacion()">
                     <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider group-hover:text-indigo-500 transition flex items-center gap-1">
                         CP: 01210 <i class="ph ph-caret-down"></i>
@@ -43,25 +42,27 @@
                     </h1>
                 </div>
                 <div class="flex gap-1">
+                    <!-- Botón para mostrar/ocultar miniaturas de imágenes -->
                     <button onclick="toggleImagenes()" class="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition" id="btn-toggle-img">
                         <i class="ph ph-image text-xl"></i>
                     </button>
-                    <!-- Menú Hamburguesa Placeholder -->
+                    <!-- Menú Principal (Placeholder para configuraciones futuras) -->
                     <button onclick="alert('Menú de configuración avanzada próximamente.')" class="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition">
                         <i class="ph ph-list text-2xl"></i>
                     </button>
                 </div>
             </div>
 
+            <!-- Buscador Fijo -->
             <div class="relative">
                 <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
                 <input type="text" id="buscador" placeholder="Buscar producto en esta tienda..." 
                        class="w-full bg-gray-100 text-sm text-gray-700 rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
             </div>
             
-            <!-- CONTROLES COMPACTOS EN UNA SOLA LÍNEA -->
+            <!-- [FILOSOFÍA] Controles en 1 sola línea (Fricción Cero, Máxima Densidad de Info) -->
             <div class="flex items-center justify-between mt-1 pt-1">
-                <!-- Toggle 1: Métrica -->
+                <!-- Toggle 1: Métrica (Etiqueta vs 100g) -->
                 <div class="flex items-center space-x-1.5">
                     <span class="text-[10px] font-bold text-indigo-600" id="label-etiqueta">Etiqueta</span>
                     <div class="relative inline-block w-10 align-middle select-none">
@@ -71,9 +72,9 @@
                     <span class="text-[10px] font-medium text-gray-400" id="label-unidad">x100g/ml</span>
                 </div>
                 
-                <div class="h-4 w-px bg-gray-200"></div> <!-- Separador visual -->
+                <div class="h-4 w-px bg-gray-200"></div> <!-- Separador visual sutil -->
 
-                <!-- Toggle 2: Comparativa -->
+                <!-- Toggle 2: Comparativa (Media vs Absoluto Mínimo) -->
                 <div class="flex items-center space-x-1.5">
                     <span class="text-[10px] font-bold text-indigo-600" id="label-comp-promedio">Promedio</span>
                     <div class="relative inline-block w-10 align-middle select-none">
@@ -86,27 +87,27 @@
         </header>
 
         <!-- ========================================== -->
-        <!-- CONTENEDOR DE TARJETAS -->
+        <!-- CONTENEDOR DE TARJETAS (Inyección Dinámica JS) -->
         <!-- ========================================== -->
         <main class="flex-1 overflow-y-auto p-4 pb-24 bg-gray-50" id="contenedor-productos"></main>
 
-        <!-- BOTÓN FLOTANTE (Fix Bug: Llama a abrirModal()) -->
-        <button onclick="abrirModal()" class="absolute bottom-6 right-6 bg-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition transform hover:scale-105 z-30">
+        <!-- BOTÓN FLOTANTE (Fix Bug: Estructura DOM restaurada correctamente) -->
+        <button onclick="abrirModalNuevo()" class="absolute bottom-6 right-6 bg-indigo-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-700 transition transform hover:scale-105 z-30">
             <i class="ph ph-plus text-2xl"></i>
         </button>
 
         <!-- ========================================== -->
-        <!-- MODAL 1: NUEVO INGRESO (Mantenido intacto) -->
+        <!-- MODAL 1: NUEVO INGRESO -->
         <!-- ========================================== -->
-        <!-- ... [El modal de nuevo ingreso original se mantiene oculto aquí por brevedad, está en el JS generado] ... -->
-        
-        <div id="modal-backdrop" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity">
-            <div id="modal-content" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl p-6 modal-enter max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+        <div id="modal-nuevo" class="fixed inset-0 bg-black/60 z-50 hidden transition-opacity backdrop-blur-sm">
+            <div id="modal-nuevo-content" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl p-6 modal-enter max-w-md mx-auto max-h-[90vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-4 sticky top-0 bg-white pb-2 z-10 border-b">
-                    <h2 class="text-lg font-bold text-gray-800">Registrar Precio</h2>
-                    <button type="button" onclick="cerrarModal()" class="text-gray-400 hover:text-gray-600"><i class="ph ph-x text-xl"></i></button>
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-1"><i class="ph ph-plus-circle text-indigo-600"></i> Registrar Producto</h2>
+                    <button type="button" onclick="cerrarModalNuevo()" class="text-gray-400 hover:text-gray-600 bg-gray-100 p-1.5 rounded-full"><i class="ph ph-x text-lg"></i></button>
                 </div>
-                <form id="form-registro" onsubmit="guardarRegistro(event)" class="flex flex-col gap-4">
+                <form id="form-nuevo" onsubmit="guardarNuevoRegistro(event)" class="flex flex-col gap-4">
+                    
+                    <!-- FOTO -->
                     <div class="w-full flex justify-center">
                         <label id="btn-foto" for="input-foto" class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                             <div class="flex flex-col items-center justify-center pt-5 pb-6 text-gray-500">
@@ -120,22 +121,27 @@
                         <img id="img-preview" src="" alt="Vista previa" class="w-full h-full object-cover">
                         <button type="button" onclick="quitarFoto('input-foto', 'img-preview', 'preview-container', 'btn-foto')" class="absolute top-1 right-1 bg-white rounded-full p-1 text-red-500 shadow"><i class="ph ph-trash"></i></button>
                     </div>
+
+                    <!-- CAMPOS BASE -->
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Nombre (Requerido)</label>
-                        <input type="text" id="input-nombre" onkeyup="evaluarCategoriaEnVivo('input-nombre', 'categoria-preview')" required placeholder="Ej: Jabón Zote 400g" class="w-full border rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <div id="categoria-preview" class="text-[10px] text-indigo-500 mt-1 hidden font-medium flex items-center gap-1"></div>
+                        <label class="block text-xs font-bold text-gray-600 mb-1">Nombre (Requerido)</label>
+                        <input type="text" id="input-nombre" onkeyup="evaluarCategoriaEnVivo('input-nombre', 'categoria-preview')" required placeholder="Ej: Jabón Zote 400g" class="w-full border-2 border-gray-200 rounded-lg py-2.5 px-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        <div id="categoria-preview" class="text-[10px] text-indigo-500 mt-1 hidden font-bold flex items-center gap-1"></div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-500 mb-1">Precio Etiqueta $ (Requerido)</label>
-                        <input type="number" id="input-precio" required step="0.01" placeholder="0.00" class="w-full border rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                        <label class="block text-xs font-bold text-indigo-800 mb-2">Precio Etiqueta $ (Requerido)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-xl font-bold text-indigo-900">$</span>
+                            <input type="number" id="input-precio" required step="0.01" placeholder="0.00" class="w-full bg-white border-2 border-indigo-200 rounded-lg py-3 pl-10 pr-4 text-xl font-bold text-indigo-900 focus:ring-4 focus:ring-indigo-500/20 outline-none transition">
+                        </div>
                     </div>
-                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition shadow-md">Guardar Registro</button>
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-700 transition shadow-md">Guardar Registro Local</button>
                 </form>
             </div>
         </div>
 
         <!-- ========================================== -->
-        <!-- MODAL 2: ACTUALIZACIÓN Y BUGS (Rediseñado) -->
+        <!-- MODAL 2: ACTUALIZACIÓN Y BUGS (Vista Plana Sin Acordeón) -->
         <!-- ========================================== -->
         <div id="modal-bug" class="fixed inset-0 bg-black/60 z-50 hidden transition-opacity backdrop-blur-sm">
             <div id="modal-bug-content" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl p-6 modal-enter max-w-md mx-auto max-h-[90vh] overflow-y-auto">
@@ -160,18 +166,19 @@
                         </div>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-xl font-bold text-indigo-900">$</span>
-                            <input type="number" id="input-bug-precio" step="0.01" placeholder="0.00" class="w-full bg-white border-2 border-indigo-200 rounded-lg py-3 pl-10 pr-4 text-xl font-bold text-indigo-900 focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition">
+                            <!-- [FILOSOFÍA] Placeholder visual, pero no "required" por si solo quieren mandar un reporte -->
+                            <input type="number" id="input-bug-precio" step="0.01" placeholder="Solo si cambió..." class="w-full bg-white border-2 border-indigo-200 rounded-lg py-3 pl-10 pr-4 text-xl font-bold text-indigo-900 focus:ring-4 focus:ring-indigo-500/20 outline-none transition">
                         </div>
                     </div>
 
-                    <!-- REPORTES SECUNDARIOS SIEMPRE VISIBLES (Sin acordeón) -->
-                    <div class="flex flex-col gap-3 pt-2 border-t">
-                        <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide flex items-center gap-1 mb-1"><i class="ph ph-flag"></i> Otras opciones de reporte</h3>
+                    <!-- [ARQUITECTURA] Opciones de reporte siempre visibles. Eliminado el "details/summary" -->
+                    <div class="flex flex-col gap-4 pt-2">
+                        <h3 class="text-xs font-bold text-gray-700 uppercase tracking-wide flex items-center gap-1 border-b pb-1"><i class="ph ph-flag"></i> Otras opciones de reporte</h3>
                         
-                        <!-- 1. Foto -->
+                        <!-- Foto Update -->
                         <div class="flex items-center gap-2">
-                            <label id="btn-bug-foto" for="input-bug-foto" class="flex-1 border border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 py-2 rounded-lg text-xs font-medium text-gray-600 text-center cursor-pointer transition">
-                                <i class="ph ph-camera mr-1"></i> Actualizar fotografía
+                            <label id="btn-bug-foto" for="input-bug-foto" class="flex-1 border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 py-3 rounded-lg text-xs font-bold text-gray-600 text-center cursor-pointer transition">
+                                <i class="ph ph-camera mr-1 text-lg"></i> Actualizar fotografía
                             </label>
                             <input id="input-bug-foto" type="file" accept="image/*" capture="environment" class="hidden" onchange="previewImagen(event, 'bug-img-preview', 'bug-preview-container', 'btn-bug-foto')"/>
                         </div>
@@ -180,35 +187,38 @@
                             <button type="button" onclick="quitarFoto('input-bug-foto', 'bug-img-preview', 'bug-preview-container', 'btn-bug-foto')" class="absolute top-1 right-1 bg-white rounded-full p-1 text-red-500 shadow"><i class="ph ph-trash"></i></button>
                         </div>
 
-                        <!-- 2. No encontrado -->
-                        <label class="flex items-center gap-2 cursor-pointer p-2.5 rounded-lg border bg-gray-50 hover:bg-red-50 hover:border-red-200 transition">
-                            <input type="checkbox" id="bug-no-encontrado" class="w-4 h-4 text-red-600 rounded border-gray-300">
-                            <span class="text-xs font-medium text-gray-700">No lo encontré (Agotado/Descontinuado)</span>
+                        <!-- No encontrado -->
+                        <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg border-2 bg-gray-50 hover:bg-red-50 hover:border-red-200 transition">
+                            <input type="checkbox" id="bug-no-encontrado" class="w-5 h-5 text-red-600 rounded border-gray-300">
+                            <span class="text-xs font-bold text-gray-700">No lo encontré (Agotado / Descontinuado)</span>
                         </label>
                         
-                        <!-- 3. Categoría (Con Datalist para búsqueda nativa Fricción Cero) -->
+                        <!-- Categoría (Datalist Nativo = Búsqueda Integrada Fricción Cero) -->
                         <div class="flex flex-col gap-1">
                             <label class="text-[10px] font-bold text-gray-500">CORREGIR CATEGORÍA SEMÁNTICA</label>
-                            <input list="categorias-list" id="bug-categoria" placeholder="Buscar o elegir categoría..." class="w-full border rounded-lg py-2.5 px-3 text-xs text-gray-700 outline-none bg-gray-50 focus:ring-2 focus:ring-indigo-500">
+                            <div class="relative">
+                                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input list="categorias-list" id="bug-categoria" placeholder="Buscar o elegir categoría..." class="w-full border-2 rounded-lg py-2.5 pl-9 pr-3 text-xs text-gray-700 outline-none bg-gray-50 focus:border-indigo-400">
+                            </div>
                             <datalist id="categorias-list">
-                                <!-- Se llena vía JS -->
+                                <!-- Se llena vía JS en la inicialización -->
                             </datalist>
                         </div>
 
-                        <!-- 4. Notas Generales -->
+                        <!-- Notas -->
                         <div class="flex flex-col gap-1">
                             <label class="text-[10px] font-bold text-gray-500">NOTAS / REPORTE GENÉRICO</label>
-                            <textarea id="bug-notas" rows="2" placeholder="Ej. El tamaño del empaque cambió..." class="w-full border rounded-lg py-2 px-3 text-xs focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50"></textarea>
+                            <textarea id="bug-notas" rows="2" placeholder="Ej. El tamaño del empaque cambió, error en la marca..." class="w-full border-2 rounded-lg py-2 px-3 text-xs focus:border-indigo-400 outline-none bg-gray-50"></textarea>
                         </div>
                     </div>
 
-                    <!-- BOTONES DE ACCIÓN (Sticky abajo para estar siempre accesibles) -->
-                    <div class="sticky bottom-0 bg-white pt-4 mt-2 border-t flex gap-2">
-                        <button type="button" onclick="enviarReporteBug()" class="flex-1 bg-gray-100 text-gray-700 font-bold py-3 rounded-xl text-xs hover:bg-gray-200 transition">
+                    <!-- BOTONES DE ACCIÓN STICKY -->
+                    <div class="sticky bottom-0 bg-white pt-4 mt-4 border-t flex gap-2">
+                        <button type="button" onclick="enviarReporteBug()" class="flex-1 bg-gray-100 text-gray-700 font-bold py-3.5 rounded-xl text-xs hover:bg-gray-200 transition">
                             Solo Reportar
                         </button>
-                        <button type="submit" class="flex-2 w-2/3 bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition shadow-md text-sm">
-                            Confirmar
+                        <button type="submit" class="flex-2 w-2/3 bg-indigo-600 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-700 transition shadow-md text-sm">
+                            Confirmar Actualización
                         </button>
                     </div>
                 </form>
@@ -216,28 +226,28 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- MODAL PLACEHOLDER (Cambiar Ubicación) -->
+        <!-- MODAL PLACEHOLDER (Filtro Ubicación) -->
         <!-- ========================================== -->
-        <div id="modal-ubicacion" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity flex items-center justify-center p-4">
+        <div id="modal-ubicacion" class="fixed inset-0 bg-black/50 z-50 hidden transition-opacity flex items-center justify-center p-4 backdrop-blur-sm">
             <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-                <h3 class="font-bold text-lg mb-2">Filtro de Ubicación</h3>
-                <p class="text-sm text-gray-500 mb-4">Selecciona el radio de competencia de precios.</p>
+                <h3 class="font-bold text-lg mb-2">Filtro Geográfico de Precios</h3>
+                <p class="text-xs text-gray-500 mb-4">Define el radio para comparar tu "Bang for your buck".</p>
                 <div class="space-y-2 mb-6">
-                    <label class="flex items-center gap-2 p-2 rounded bg-indigo-50 border border-indigo-200"><input type="radio" name="loc" checked> <b>Misma Tienda</b></label>
-                    <label class="flex items-center gap-2 p-2 rounded border opacity-50"><input type="radio" name="loc" disabled> Mismo C.P. (Próximamente)</label>
-                    <label class="flex items-center gap-2 p-2 rounded border opacity-50"><input type="radio" name="loc" disabled> Toda la Ciudad (Próximamente)</label>
+                    <label class="flex items-center gap-2 p-3 rounded-lg bg-indigo-50 border-2 border-indigo-200 cursor-pointer"><input type="radio" name="loc" checked> <span class="font-bold text-sm">Solo esta Sucursal</span></label>
+                    <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-gray-100 opacity-50 cursor-not-allowed"><input type="radio" name="loc" disabled> <span class="font-bold text-sm">Mismo C.P. (01210)</span> <span class="text-[10px] bg-gray-200 px-2 rounded-full">Próximamente</span></label>
+                    <label class="flex items-center gap-2 p-3 rounded-lg border-2 border-gray-100 opacity-50 cursor-not-allowed"><input type="radio" name="loc" disabled> <span class="font-bold text-sm">Toda la Ciudad</span></label>
                 </div>
-                <button onclick="document.getElementById('modal-ubicacion').classList.add('hidden')" class="w-full bg-indigo-600 text-white font-bold py-2 rounded-lg">Cerrar</button>
+                <button onclick="document.getElementById('modal-ubicacion').classList.add('hidden')" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl hover:bg-gray-900 transition">Guardar y Cerrar</button>
             </div>
         </div>
 
     </div>
 
     <!-- ========================================== -->
-    <!-- LOGICA JAVASCRIPT Y MOTOR -->
+    <!-- LÓGICA JAVASCRIPT (Motor y Estado) -->
     <!-- ========================================== -->
     <script>
-        // [ARQUITECTURA] Diccionarios de UI para mapear datos crudos a representaciones amigables
+        // [ARQUITECTURA] Diccionarios de Mapeo
         const DICCIONARIO_FUENTES = {
             "scraping_api": { icono: "ph-robot", label: "Web Scraping" },
             "manual_privado": { icono: "ph-user-focus", label: "Actualizado por ti" },
@@ -255,7 +265,7 @@
             { id: "limpieza", nombre: "Higiene y Limpieza", regex: /detergente|cloro|suavizante|jab[oó]n|shampoo|desodorante|papel higi[eé]nico|servilletas/i, icono: "ph-drop" }
         ];
 
-        // Poblar datalist de categorías
+        // Poblar datalist nativo (Mejor performance que un JS dropdown pesado)
         const dataListCategorias = document.getElementById('categorias-list');
         DICCIONARIO_SEMANTICO.forEach(cat => {
             let opt = document.createElement('option');
@@ -263,7 +273,7 @@
             dataListCategorias.appendChild(opt);
         });
 
-        // Base de Datos de Prueba (Simulando API Response)
+        // [DATOS MOCK] JSON de Entidades (Productos y Registros de Evento fusionados para el prototipo visual)
         let datosCrudos = [
             { id: "1", nombre: "Aceite de aguacate Avocare 500 ml", precio: { actual: 160.00 }, marca: "Avocare", subtipo: "aceite de aguacate", tienda_id: "walmart_patio", url_foto: "https://images.unsplash.com/photo-1620603706093-4e443cecbdf3?w=100&h=100&fit=crop", registro_meta: { timestamp: Date.now(), origen_id: "scraping_api" } },
             { id: "2", nombre: "Catsup Heinz pouch 620 g", precio: { actual: 28.00 }, marca: "Heinz", subtipo: "catsup", tienda_id: "walmart_patio", url_foto: "https://images.unsplash.com/photo-1604325492484-934cfa593414?w=100&h=100&fit=crop", registro_meta: { timestamp: Date.now() - 100000, origen_id: "scraping_api" } },
@@ -275,20 +285,20 @@
             { id: "c3", nombre: "Sopa instantánea Maruchan camarón 64 g", precio: { actual: 12.00 }, marca: "Maruchan", subtipo: "sopa instantanea", tienda_id: "competencia", registro_meta: { timestamp: Date.now(), origen_id: "competencia" } }
         ];
 
-        // Estado Global UI
+        // Estado Global
         let mostrarPrecioEstandar = false;
         let comparacionModo = 'promedio';
         let mostrarImagenes = false;
         let busquedaActual = "";
         let productosCompletos = [];
 
-        // [FILOSOFÍA] Motor de Procesamiento y Estandarización de "Peras con Peras"
+        // [FILOSOFÍA] Regla de 3 y Comparación de Peras con Peras (El corazón de la app)
         function procesarDatos() {
             const regexTamano = /(\d+(?:\.\d+)?)\s*(ml|l|g|kg|litros|mililitros)/i;
             let productosParseados = [];
             let statsSubcategoria = {}; 
 
-            // 1. Parseo y Extracción de Meta-Data
+            // 1. Estandarización a Base 100 y Detección Semántica
             datosCrudos.forEach(prod => {
                 const match = prod.nombre.match(regexTamano);
                 let presentacion = { valor: 1, unidad: 'u' };
@@ -327,7 +337,6 @@
                 };
                 productosParseados.push(objProcesado);
 
-                // Estadísticas Agrupadas
                 if (precioEstandar) {
                     if (!statsSubcategoria[subtipoReal]) {
                         statsSubcategoria[subtipoReal] = { count: 0, suma: 0, min: Infinity, max: -Infinity };
@@ -339,7 +348,7 @@
                 }
             });
 
-            // 2. Aplicar Escala de Color 5 Tonos Text-Only
+            // 2. Aplicar Escala de Color "Texto Bold" según distribución estadística
             return productosParseados.map(prod => {
                 let colorTexto = "text-gray-900"; 
                 let fontWeight = "font-bold";
@@ -357,15 +366,15 @@
 
                     if (isMin) {
                         colorTexto = "text-emerald-700"; fontWeight = "font-black";
-                        msgPromedio = `Más barato en su categoría (${Math.abs(difMedia).toFixed(1)}% vs media)`;
+                        msgPromedio = `Más barato de la categoría (${Math.abs(difMedia).toFixed(1)}% vs media)`;
                         msgMinimo = `🏆 Es el más barato (-${Math.abs(difMedia).toFixed(1)}% vs media)`;
                     } else if (isMax) {
                         colorTexto = "text-rose-700"; fontWeight = "font-black";
-                        msgPromedio = `Más caro en su categoría (+${difMedia.toFixed(1)}% vs media)`;
+                        msgPromedio = `El más caro de la categoría (+${difMedia.toFixed(1)}% vs media)`;
                         msgMinimo = `El más caro (+${difMin.toFixed(1)}% vs el más barato)`;
                     } else if (difMedia <= 0) {
                         colorTexto = "text-emerald-500"; fontWeight = "font-bold";
-                        msgPromedio = `${Math.abs(difMedia).toFixed(1)}% abajo de la media`;
+                        msgPromedio = `${Math.abs(difMedia).toFixed(1)}% debajo de la media`;
                         msgMinimo = `+${difMin.toFixed(1)}% vs el más barato`;
                     } else {
                         colorTexto = "text-rose-500"; fontWeight = "font-bold";
@@ -378,7 +387,7 @@
         }
 
         // ==========================================
-        // RENDERIZADO
+        // MANIPULACIÓN DEL DOM (Render)
         // ==========================================
         function actualizarDatos() {
             productosCompletos = procesarDatos();
@@ -396,24 +405,16 @@
             );
 
             if (filtrados.length === 0) {
-                contenedor.innerHTML = `<div class="text-center text-gray-400 mt-10"><i class="ph ph-magnifying-glass text-4xl mb-2"></i><p>No se encontraron productos.</p></div>`;
+                contenedor.innerHTML = `<div class="text-center text-gray-400 mt-10 flex flex-col items-center"><i class="ph ph-magnifying-glass text-5xl mb-2 text-gray-300"></i><p class="font-medium">No hay productos en esta tienda.</p><p class="text-xs">Usa el botón + para registrar el primero.</p></div>`;
                 return;
             }
 
             filtrados.forEach(prod => {
-                const precioPrincipal = mostrarPrecioEstandar && prod.precio_estandar 
-                    ? `$${prod.precio_estandar.toFixed(2)}` 
-                    : `$${prod.precio.actual.toFixed(2)}`;
-                
-                const sufijoPrecio = mostrarPrecioEstandar && prod.precio_estandar 
-                    ? `/ ${prod.unidad_estandar}` 
-                    : `Etiqueta`;
-
+                const precioPrincipal = mostrarPrecioEstandar && prod.precio_estandar ? `$${prod.precio_estandar.toFixed(2)}` : `$${prod.precio.actual.toFixed(2)}`;
+                const sufijoPrecio = mostrarPrecioEstandar && prod.precio_estandar ? `/ ${prod.unidad_estandar}` : `Etiqueta`;
                 const leyendaCalculada = comparacionModo === 'promedio' ? prod.msgPromedio : prod.msgMinimo;
                 
-                const imgHtml = (mostrarImagenes && prod.url_foto) 
-                    ? `<img src="${prod.url_foto}" class="w-12 h-12 rounded object-cover border shrink-0">` 
-                    : '';
+                const imgHtml = (mostrarImagenes && prod.url_foto) ? `<img src="${prod.url_foto}" class="w-12 h-12 rounded-lg object-cover border shrink-0 shadow-sm">` : '';
 
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3 flex flex-col gap-3 relative";
@@ -429,7 +430,7 @@
                             </div>
                             <h3 class="font-bold text-gray-800 leading-tight text-sm">${prod.nombre_raiz}</h3>
                             <div class="flex items-center gap-2 mt-1">
-                                <span class="text-xs text-gray-500">${prod.marca || ''}</span>
+                                <span class="text-xs text-gray-500 font-medium">${prod.marca || ''}</span>
                                 <span class="text-[10px] font-mono bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 border border-gray-200">${prod.presentacion_parseada.valor}${prod.presentacion_parseada.unidad}</span>
                             </div>
                         </div>
@@ -446,7 +447,7 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-[10px] font-bold ${prod.colorTexto} bg-gray-50 px-2 py-1 rounded">${leyendaCalculada}</span>
-                            <button onclick="abrirModalBug('${prod.id}')" class="bg-amber-100 text-amber-600 hover:bg-amber-200 p-1.5 rounded-full transition shadow-sm border border-amber-200">
+                            <button onclick="abrirModalBug('${prod.id}')" class="bg-amber-50 text-amber-600 hover:bg-amber-100 p-1.5 rounded-full transition shadow-sm border border-amber-200">
                                 <i class="ph-bold ph-warning text-sm"></i>
                             </button>
                         </div>
@@ -457,18 +458,14 @@
         }
 
         // ==========================================
-        // CONTROLADORES DE INTERACCIÓN
+        // CONTROLADORES UI (Event Listeners)
         // ==========================================
-        document.getElementById('buscador').addEventListener('input', (e) => {
-            busquedaActual = e.target.value; renderizarTarjetas();
-        });
+        document.getElementById('buscador').addEventListener('input', (e) => { busquedaActual = e.target.value; renderizarTarjetas(); });
 
         function toggleImagenes() {
             mostrarImagenes = !mostrarImagenes;
             const btn = document.getElementById('btn-toggle-img');
-            btn.className = mostrarImagenes 
-                ? "p-2 rounded-full transition text-indigo-600 bg-indigo-50"
-                : "p-2 rounded-full transition text-gray-400 hover:text-indigo-600 hover:bg-indigo-50";
+            btn.className = mostrarImagenes ? "p-2 rounded-full transition text-indigo-600 bg-indigo-50" : "p-2 rounded-full transition text-gray-400 hover:text-indigo-600 hover:bg-indigo-50";
             renderizarTarjetas();
         }
 
@@ -486,10 +483,11 @@
             renderizarTarjetas();
         });
 
+        // ==========================================
+        // FUNCIONES DE MODALES Y FORMULARIOS
+        // ==========================================
         function obtenerCategoriaSemantica(nombre) {
-            for (let cat of DICCIONARIO_SEMANTICO) {
-                if (cat.regex.test(nombre)) return cat;
-            }
+            for (let cat of DICCIONARIO_SEMANTICO) if (cat.regex.test(nombre)) return cat;
             return { id: "otros", nombre: "Otros", icono: "ph-shopping-bag" };
         }
 
@@ -498,14 +496,13 @@
             const preview = document.getElementById(previewId);
             if (nombre.length > 3) {
                 const cat = obtenerCategoriaSemantica(nombre);
-                preview.innerHTML = `<i class="ph ${cat.icono}"></i> Detectado: ${cat.nombre}`;
+                preview.innerHTML = `<i class="ph ${cat.icono}"></i> Categoría sugerida: ${cat.nombre}`;
                 preview.classList.remove('hidden');
             } else {
                 preview.classList.add('hidden');
             }
         }
 
-        // Utilidad común para manejo de fotos (Sirve para modal Nuevo y modal Bug)
         function previewImagen(event, imgId, containerId, btnId) {
             const input = event.target;
             if (input.files && input.files[0]) {
@@ -526,26 +523,51 @@
             document.getElementById(btnId).classList.remove('hidden');
         }
 
-        // Modal Nuevo
-        function abrirModal() {
-            document.getElementById('modal-backdrop').classList.remove('hidden');
-            setTimeout(() => {
-                document.getElementById('modal-content').classList.replace('modal-enter', 'modal-enter-active');
-            }, 10);
+        // Flujo Modal NUEVO
+        function abrirModalNuevo() {
+            document.getElementById('modal-nuevo').classList.remove('hidden');
+            setTimeout(() => { document.getElementById('modal-nuevo-content').classList.replace('modal-enter', 'modal-enter-active'); }, 10);
             document.getElementById('input-nombre').focus();
         }
 
-        function cerrarModal() {
-            document.getElementById('modal-content').classList.replace('modal-enter-active', 'modal-leave-active');
+        function cerrarModalNuevo() {
+            document.getElementById('modal-nuevo-content').classList.replace('modal-enter-active', 'modal-leave-active');
             setTimeout(() => {
-                document.getElementById('modal-backdrop').classList.add('hidden');
-                document.getElementById('modal-content').classList.replace('modal-leave-active', 'modal-enter');
-                document.getElementById('form-registro').reset();
+                document.getElementById('modal-nuevo').classList.add('hidden');
+                document.getElementById('modal-nuevo-content').classList.replace('modal-leave-active', 'modal-enter');
+                document.getElementById('form-nuevo').reset();
                 quitarFoto('input-foto', 'img-preview', 'preview-container', 'btn-foto');
+                document.getElementById('categoria-preview').classList.add('hidden');
             }, 200);
         }
 
-        // Modal Bug / Update
+        function guardarNuevoRegistro(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('input-nombre').value;
+            const precio = parseFloat(document.getElementById('input-precio').value);
+            const fotoInput = document.getElementById('input-foto').files[0];
+
+            let objMeta = { timestamp: Date.now(), origen_id: "manual_privado" };
+            if (fotoInput) objMeta.tiene_foto = true;
+
+            const nuevoRegistro = { 
+                id: Date.now().toString(), 
+                nombre: nombre, 
+                precio: { actual: precio }, 
+                marca: "Desconocida", // En un prod real esto vendría de campos opcionales extendidos
+                tienda_id: "walmart_patio", 
+                registro_meta: objMeta 
+            };
+
+            // Simulación de carga local
+            if (fotoInput) nuevoRegistro.url_foto = document.getElementById('img-preview').src;
+
+            datosCrudos.unshift(nuevoRegistro);
+            actualizarDatos();
+            cerrarModalNuevo();
+        }
+
+        // Flujo Modal BUG/UPDATE
         function abrirModalBug(idProducto) {
             const prod = datosCrudos.find(p => p.id === idProducto);
             if(!prod) return;
@@ -555,7 +577,6 @@
             
             document.getElementById('modal-bug').classList.remove('hidden');
             setTimeout(() => { document.getElementById('modal-bug-content').classList.replace('modal-enter', 'modal-enter-active'); }, 10);
-            document.getElementById('input-bug-precio').focus();
         }
 
         function cerrarModalBug() {
@@ -568,36 +589,32 @@
             }, 200);
         }
 
-        // Guardados
-        function guardarRegistro(e) {
-            e.preventDefault();
-            const nombre = document.getElementById('input-nombre').value;
-            const precio = parseFloat(document.getElementById('input-precio').value);
-            const fotoInput = document.getElementById('input-foto').files[0];
-
-            let objMeta = { timestamp: Date.now(), origen_id: "manual_privado" };
-            if (fotoInput) objMeta.tiene_foto = true;
-
-            datosCrudos.unshift({ id: Date.now().toString(), nombre: nombre, precio: { actual: precio }, marca: "Desconocida", tienda_id: "walmart_patio", registro_meta: objMeta });
-            actualizarDatos();
-            cerrarModal();
-        }
-
         function guardarActualizacion(e) {
             e.preventDefault();
             const idBase = document.getElementById('bug-prod-id').value;
             const nuevoPrecioInput = document.getElementById('input-bug-precio').value;
-            if(!nuevoPrecioInput) return;
-            
             const prodBase = datosCrudos.find(p => p.id === idBase);
-            const prodActualizado = { ...prodBase, id: Date.now().toString(), precio: { actual: parseFloat(nuevoPrecioInput) }, registro_meta: { timestamp: Date.now(), origen_id: "manual_privado" } };
             
-            // Reemplazar la foto si subió una nueva
-            if (document.getElementById('input-bug-foto').files[0]) {
-                prodActualizado.url_foto = document.getElementById('bug-img-preview').src; // Simulando carga
+            let prodActualizado = { ...prodBase }; // Clonar data original
+            
+            // 1. Si enviaron precio, actualizar y cambiar timestamp
+            if(nuevoPrecioInput) {
+                prodActualizado.id = Date.now().toString(); // Se vuelve un nuevo evento en el tiempo
+                prodActualizado.precio = { actual: parseFloat(nuevoPrecioInput) };
+                prodActualizado.registro_meta = { timestamp: Date.now(), origen_id: "manual_privado" };
             }
 
-            datosCrudos.unshift(prodActualizado);
+            // 2. Si subieron foto nueva
+            if (document.getElementById('input-bug-foto').files[0]) {
+                prodActualizado.url_foto = document.getElementById('bug-img-preview').src; 
+            }
+
+            // [ARQUITECTURA] Tratamiento del Historial (Append, no overwrite en DB Real)
+            if(nuevoPrecioInput || document.getElementById('input-bug-foto').files[0]) {
+                // En UI de prueba, ponemos el nuevo hasta arriba. En backend, se guarda en el log y UI muestra el más reciente.
+                datosCrudos.unshift(prodActualizado);
+            }
+
             enviarReporteBugSecundario();
             actualizarDatos();
             cerrarModalBug();
@@ -606,20 +623,24 @@
         function enviarReporteBug() {
             enviarReporteBugSecundario();
             cerrarModalBug();
-            alert("Reporte enviado. ¡Gracias!"); 
+            alert("Reporte enviado. ¡Gracias por ayudar a limpiar los datos!"); 
         }
 
         function enviarReporteBugSecundario() {
             const noEncontrado = document.getElementById('bug-no-encontrado').checked;
             const catInco = document.getElementById('bug-categoria').value;
             const notas = document.getElementById('bug-notas').value;
-            if (noEncontrado || catInco || notas) { console.log("Auditoría enviada:", { noEncontrado, catInco, notas }); }
+            
+            if (noEncontrado || catInco || notas) { 
+                console.log("Auditoría lista para enviar al backend:", { noEncontrado, catInco, notas }); 
+            }
         }
 
         function abrirModalUbicacion() {
             document.getElementById('modal-ubicacion').classList.remove('hidden');
         }
 
+        // INIT
         actualizarDatos();
     </script>
 </body>
