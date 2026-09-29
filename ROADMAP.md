@@ -1,6 +1,6 @@
 # compa-precio roadmap (single source of truth) — DRAFT
 
-Updated: 2026-09-25. Owner: Victor. **Everything here is a draft written by Claude from the code
+Updated: 2026-09-29. Owner: Victor. **Everything here is a draft written by Claude from the code
 and README, to be confirmed in an interview with Victor.** Any AI working on this repo reads
 `AGENTS.md`, then this file, and updates both when something changes. Details and evidence:
 `docs/READOUT-2026-09-25.md`.
@@ -21,7 +21,7 @@ Each checkpoint starts only when Victor is comfortable with the previous one.
 | # | Checkpoint | Who uses it | Goal | Status |
 |---|---|---|---|---|
 | 0 | Safety patch | the live prototype | No HTML injection, no unpinned CDN scripts, no false "Reporte enviado" (or take the page offline) | 🔜 |
-| 1 | **My prices, my stores** | Victor (+ wife) | Record a shelf price in under 5 s; per-100 g/ml comparison that is right; saved on the phone; offline; installable; "Mis tiendas"; export | 💤 after the interview |
+| 1 | **My prices, my stores** | Victor's household | Record a shelf price in under 5 s; per-100 g/ml comparison that is right; saved on the phone; offline; installable; "Mis tiendas"; export | 💤 after the interview |
 | 2 | Friends and family | ~10-20 people | Feedback; optional PROFECO reference prices; maybe share a price log between two phones (ListoLista's encrypted sync) | 💤 |
 | 3 | Public, open source | anyone | English, contribution rules, maybe community prices (with protection against bad data) | 💤 |
 | — | Merge with ListoLista | — | "Precios" as an opt-in switch inside ListoLista (price chip in aisle view), or stay sister apps | 💤 decide after ListoLista checkpoint 1 is live |
@@ -57,7 +57,10 @@ Each checkpoint starts only when Victor is comfortable with the previous one.
 ---
 
 ## Decisions waiting on Victor (priority order) — defaults are drafts
-| # | Decision | Why it matters | Default if no answer |
+These are design and direction calls: a suggested default is a proposal and waits for Victor's answer
+(silence is not a yes). Only purely technical choices may take their default after 7 days.
+
+| # | Decision | Why it matters | Suggested default (needs Victor) |
 |---|---|---|---|
 | D1 | **Merge path with ListoLista:** A) sister apps sharing parts, B) "Precios" switch inside ListoLista, C) full merge now | Where the code lives; what gets built first | A now, B as the target; decide after ListoLista checkpoint 1 |
 | D2 | **Web address:** stay on vdm285.github.io (shares storage with ListoLista) or own address (e.g. free Cloudflare name) | Separate apps must not share one storage box; changing later resets installs | Own address before anything is saved; if D1 = B, it lives wherever ListoLista lives |
@@ -79,6 +82,8 @@ Each checkpoint starts only when Victor is comfortable with the previous one.
   own unit (per piece, per roll, per sheet).
 
 ## Log (newest first)
+- 2026-09-29: working rules from Victor's HQ in `AGENTS.md`; personal details removed from the docs;
+  decision column renamed "Suggested default (needs Victor)".
 - 2026-09-25: repo read in full; engine and scraper tested with jsc/Python; readout, AGENTS.md,
   CLAUDE.md and this draft roadmap on branch `claude/readout-2026-09-25` (not on main, not pushed).
 - 2026-03-28/29: prototype, README, architecture essay and Walmart extractor published (GitHub web editor).
