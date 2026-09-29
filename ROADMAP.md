@@ -21,7 +21,7 @@ Each checkpoint starts only when Victor is comfortable with the previous one.
 | # | Checkpoint | Who uses it | Goal | Status |
 |---|---|---|---|---|
 | 0 | Safety patch | the live prototype | No HTML injection, no unpinned CDN scripts, no false "Reporte enviado" (or take the page offline) | 🔜 |
-| 1 | **My prices, my stores** | Victor's household | Record a shelf price in under 5 s; per-100 g/ml comparison that is right; saved on the phone; offline; installable; "Mis tiendas"; export | 💤 after the interview |
+| 1 | **My prices, my stores** | Victor's close circle | Record a shelf price in under 5 s; per-100 g/ml comparison that is right; saved on the phone; offline; installable; "Mis tiendas"; export | 💤 after the interview |
 | 2 | Friends and family | ~10-20 people | Feedback; optional PROFECO reference prices; maybe share a price log between two phones (ListoLista's encrypted sync) | 💤 |
 | 3 | Public, open source | anyone | English, contribution rules, maybe community prices (with protection against bad data) | 💤 |
 | — | Merge with ListoLista | — | "Precios" as an opt-in switch inside ListoLista (price chip in aisle view), or stay sister apps | 💤 decide after ListoLista checkpoint 1 is live |
@@ -36,7 +36,7 @@ Each checkpoint starts only when Victor is comfortable with the previous one.
 - ✅ `index.html` prototype: cards, two switches (label vs per-100 g/ml; average vs cheapest),
   search, "+" modal with camera, update/report modal, category hint, location placeholder.
 - ✅ Walmart HTML → JSON extractor + zipper (Colab).
-- ✅ Readout, AGENTS.md, this roadmap (2026-09-25, branch `claude/readout-2026-09-25`).
+- ✅ Readout, AGENTS.md, this roadmap (2026-09-25; merged into `main` 2026-09-29, readout branch deleted).
 
 ### Next, in order (effort in senior hours; "junior" = delegable with a pass/fail test)
 1. ⏳ **Interview** (20 min) → confirm the decisions table below.
@@ -85,5 +85,5 @@ These are design and direction calls: a suggested default is a proposal and wait
 - 2026-09-29: working rules from Victor's HQ in `AGENTS.md`; personal details removed from the docs;
   decision column renamed "Suggested default (needs Victor)".
 - 2026-09-25: repo read in full; engine and scraper tested with jsc/Python; readout, AGENTS.md,
-  CLAUDE.md and this draft roadmap on branch `claude/readout-2026-09-25` (not on main, not pushed).
+  CLAUDE.md and this draft roadmap (merged into `main` and pushed 2026-09-29; readout branch deleted).
 - 2026-03-28/29: prototype, README, architecture essay and Walmart extractor published (GitHub web editor).

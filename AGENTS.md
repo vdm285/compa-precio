@@ -16,6 +16,11 @@ Owner: Victor (github.com/vdm285). Stage: learning, portfolio and open source; n
   default may apply after 7 days of silence for technical choices only. Always ask first: force pushes,
   deleting his data, anything posted or sent in his name, logins and passwords.
 - **Pushback:** on logic or design flaws and untested claims (not caution or licence caveats).
+- **Depth:** build quick, ideas deep ("quick" or "deep" from Victor overrides). When our own test
+  contradicts a trusted source, show both sides briefly and test both.
+- **Code and words:** lean code with a short "why" note (not golfed); short, plain text for users;
+  reusable modules. Naming: say if an industry-standard name exists, else propose a few
+  analogy-based names.
 - **Test it ourselves:** when a claim is thin or contested, run a small test: pass mark first, plus a
   control that can fail.
 - **Brief card:** before any unattended agent run, Victor approves a one-screen card (goal, will / won't
@@ -37,7 +42,7 @@ physical prices you see in the supermarket and compares like with like ("peras c
 the README's **"spreadsheet test"**: every feature must beat typing it into Google Sheets. It will
 probably merge with ListoLista (Victor's shared shopping list, `~/projects/listolista`) later.
 
-Rollout by checkpoints (draft, see `ROADMAP.md`): 1) Victor's household, in its own stores;
+Rollout by checkpoints (draft, see `ROADMAP.md`): 1) Victor's close circle, in its own stores;
 2) friends and family; 3) free public open-source app.
 
 ## Design principles (Victor's, for all projects, plus this README's)
@@ -58,7 +63,7 @@ Rollout by checkpoints (draft, see `ROADMAP.md`): 1) Victor's household, in its 
 
 ## Current state (2026-09-25)
 - `main` = the prototype from 2026-03-28/29, live on GitHub Pages: one `index.html` (Tailwind and
-  Phosphor icons from CDNs), 8 mock records, one hard-coded store (Walmart Patio Santa Fe, CP 01210).
+  Phosphor icons from CDNs), 8 mock records, one hard-coded store (a Walmart branch).
   **Nothing is saved** (in memory only), no offline/PWA files, location filter is a placeholder.
 - `HTML-to-JSON (Walmart)` + `- Zipper`: Colab cells that turn hand-saved Walmart category pages
   into JSON. Their output does not fit the app yet.
@@ -76,8 +81,8 @@ bundlers unless Victor asks); **don't change the maths in `procesarDatos()` (gro
 (decisions D4 and D5 in `ROADMAP.md`): ask before acting on them.
 
 ## How to work here
-- Read this file, then `ROADMAP.md`, then the readout. Ask at critical checkpoints and push back
-  when something doesn't make sense.
+- Read this file, then `ROADMAP.md`, then the readout. Push back on logic or design flaws and
+  untested claims (see 'Owner and working rules').
 - **Branch per piece of work**; `main` is the live site: merge only tested work.
 - Proposed structure (draft, copy from ListoLista `design/checkpoint-1`): edit `src/` and `data/`,
   build one `index.html` with `python3 tools/build.py`; pure logic (size parser, statistics,
